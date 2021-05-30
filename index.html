@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1"/>
+    <title>Комбинатор флоатов, от Rogalik</title>
+    <link id="cssFile" rel="stylesheet" href="index.css"/>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112244519-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-112244519-1');
+    </script>
+  </head>
+  <body onload="load()">
+    <img src="downarrow.png" alt="Look Below" id="arrowPop">
+
+    <div class="tab">
+      <button id="tfDivbtn" class="tablinks tabButton" onclick="openTab('tfDiv')">Простой калькулятор на 10 Floats</button>
+      <button id="floatCombosDivbtn" class="tablinks tabButton" onclick="openTab('floatCombosDiv')">Генератор комбинаций Float</button>
+      <button id="opskinsFloatCombosDivbtn" class="tablinks tabButton" onclick="openTab('opskinsFloatCombosDiv')">BitSkins Float Генератор комбинаций</button>
+      <!-- <button id="ATCDivbtn" class="tablinks tabButton" onclick="openTab('ATCDiv')">Add Skins to BitSkins Cart</button> -->
+      <button id="ieee754Divbtn" class="tablinks tabButton" onclick="openTab('ieee754Div')">IEEE754 Converter</button>
+      <button id="floatPyramidDivbtn" class="tablinks tabButton" onclick="openTab('floatPyramidDiv')">Float Пирамида</button>
+
+      <div id="creatorInfo">
+        <br><br>
+        <p id="reload">Если что-то не работает, перезагрузите страницу! (или продублируйте, чтобы сохранить информацию)</p>
+        <br><br>
+        <button id="showHelp" onclick="showHelp()">ВКЛАДКА ИНФОРМАЦИЯ</button>
+
+        <div id="overlay" onclick="dontShowHelp()">
+          <div id="helpText"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="disclaimer" onclick="hideDisclaimer()">
+      <div id="disclaimerText">
+        Нажмите в любом месте, чтобы выйти
+        <br><br><br>
+        Точность крафтов очень близка к 100%, если вы делаете крафты В ПРАВИЛЬНОМ ПОРЯДКЕ (делайте так чтобы флоаты указывались слева направо)
+        <br><br>
+        Но все же убедитесь, что вы проверили на <a class="link" href="https://csgo.exchange/contract/tradeup#">https://csgo.exchange/</a> чтобы дважды проверяйте точность своей работы, прежде чем делать какие-либо крафты.
+        <br><br>
+        Кроме этого страшного текста, все должно быть в порядке.
+        <br>
+        Пожалуйста, присылайте мне ошибки / предложения / комментарии / комплименты
+      </div>
+    </div>
+
+    <div id="tfText" class="displayNone">
+      Нажмите в любом месте, чтобы выйти
+      <br><br><br>
+      Эта страница может помочь вам определить выходное число 10 скинов. <br><br>
+      У него также есть изящная функция, сообщающая вам, какое среднее значение вам нужно для floats, которые вы еще не вставили, чтобы получить желаемый float.<br><br>
+      Попробуйте повозиться с числами, если не понимаете <br><br>
+      Чтобы найти минимальное и максимальное значения float для скина, до которого вы хотите обменять, ознакомьтесь с <a class="link" href="https://csgo.exchange/contract/tradeup#">https://csgo.exchange/#/</a><br><br><br>
+      Имейте в виду порядок, если слева направо сверху вниз. Так:<br><br>
+      1 2<br><br>
+      3 4<br><br>
+      5 6 <br><br>
+      и т.д.<br>
+    </div>
+    <div id="ieee754Text" class="displayNone">
+      Нажмите в любом месте, чтобы выйти
+      <br><br><br>
+      Эта страница поможет вам увидеть, как csgo вычисляет floats <br><br>
+      вы можете вставить желаемый float, и он покажет вам IEEE754 представление, что csgo выведет <br><br>
+      Попробуйте добавить или вычесть очень маленькие суммы, чтобы увидеть, к чему вы должны стремиться. <br><br>
+      Например, 0,420 дает немного меньше 0,420, поэтому попробуйте 0,420000005.<br><br>
+      Затем он покажет вам минимальное и максимальное десятичные числа, которые дают желаемое значение с плавающим флоатом IEEE754.<br><br>
+      Вы также можете увидеть точную середину, к которой вы можете стремиться на всякий случай. <br><br>
+    </div>
+    <div id="fcText" class="displayNone">
+      Нажмите в любом месте, чтобы выйти
+      <br><br>
+      Эта страница довольно проста <br><br>
+      Введите минимальный / максимальный износ скина, который вы хотите сделать (находится на <a class="link" href="https://csgostash.com/">https://csgostash.com/</a>) <br><br>
+      Наряду с тем, какой float вы хотите, и парой других параметров <br><br>
+      И введите 10 или более чисел с плавающей запятой и нажмите кнопку "Создать". <br><br>
+      Это сгенерирует комбинации из этих 10 чисел с плавающих флоатов и покажет, какое число с плавающей запятой является результатом (при условии, что оно находится в диапазоне от того, сколько отображать) <br><br>
+     Не забудьте дважды проверить любые комбинации с <a class="link" href="https://csgo.exchange/contract/tradeup#">https://csgo.exchange/</a>. Таким образом, если набор из 10 скинов немного отличается, вы можете продать их до того, как сделаете обмен.<br><br>
+    </div>
+    <div id="opcombosText" class="displayNone">
+      Нажмите в любом месте, чтобы выйти
+      <br><br>
+      Эта страница в основном такая же, как и обычная страница комбинаций поплавков, за исключением того, что вы можете загружать данные из opskins. <br><br>
+      Для этого вам нужно использовать свой собственный ключ api <br><br>
+      Чтобы получить свой, перейдите в настройки BitSkins. Вам нужно будет включить 2fa, чтобы получить собственный ключ API.<br><br>
+      Введите параметры поиска и нажмите кнопку «Добавить», чтобы добавить данные в раздел ниже. <br><br>
+      Чтобы найти минимальное и максимальное значения float для скина, до которого вы хотите обменять, ознакомьтесь с <a class="link" href="https://csgostash.com/">https://csgostash.com/</a><br><br>
+      Вы можете добавить более одного поиска и выбрать, сколько чисел с плавающей запятой из каждого должно использоваться для генерации комбинаций. <br> <br>
+      Если вы хотите, чтобы один поиск давал больше результатов, чем другой, просто измените параметры на «x, x, x, x», чтобы загружать x чисел с плавающим флоатом из каждого поиска (search0 - searchchn) <br> <br>
+      Я не пытаюсь украсть ваш ключ api, но поскольку существует много мошенников, а код в настоящее время не является открытым исходным кодом,
+      вы можете просто ввести свои спецификации, и на странице будет ссылка, по которой вы можете ввести свой собственный ключ API <br> <br>
+     Как только у вас будет открыта вкладка с данными, скопируйте + вставьте ее в текстовое поле ниже «Всего возможных комбинаций» (убедитесь, что между наборами данных есть полная строка).<br><br>
+     Не забудьте дважды проверить любые комбинации с <a class="link" href="https://csgo.exchange/contract/tradeup#">https://csgo.exchanget/</a>. Таким образом, если набор из 10 скинов немного отличается, вы можете продать их до того, как не сделаете обмен.<br><br><br>
+        </div>
+    <!--
+    -->
+<!-- ********************************************************************************************************************************************************************* -->
+    <div id="tfDiv" class="tabcontent">
+      <div id=tfParent>
+        <div id="tfEntering">
+          <div>
+            <h1 id="tfEnterFloatsText">Введите Floats</h1>
+          </div>
+          <div class="width100">
+            <div class="centerFlex">
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.1" onkeyup="tfUpdateOutputs()"/>
+              </div>
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.2" onkeyup="tfUpdateOutputs()"/>
+              </div>
+            </div>
+          </div>
+          <div class="width100">
+            <div class="centerFlex">
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.3" onkeyup="tfUpdateOutputs()"/>
+              </div>
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.4" onkeyup="tfUpdateOutputs()"/>
+              </div>
+            </div>
+          </div>
+          <div class="width100">
+            <div class="centerFlex">
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.5" onkeyup="tfUpdateOutputs()"/>
+              </div>
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.6" onkeyup="tfUpdateOutputs()"/>
+              </div>
+            </div>
+          </div>
+          <div class="width100">
+            <div class="centerFlex">
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.7" onkeyup="tfUpdateOutputs()"/>
+              </div>
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.8" onkeyup="tfUpdateOutputs()"/>
+              </div>
+            </div>
+          </div>
+          <div class="width100">
+            <div class="centerFlex">
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.9" onkeyup="tfUpdateOutputs()"/>
+              </div>
+              <div class="tfFloatsSpacing">
+                <input class="tfFloats" type="number" max="1.0" min="0.0" value="0.10" onkeyup="tfUpdateOutputs()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tfExtraInfo width100">
+          <div class="centerFlex">
+            <div class="tfInfoSpacing">
+              <h4 id="tfEnterMaxWearText" class="tfInfoText">Введите максимальный износ</h4>
+              <input id="tfMaxWearInput" class="tfExtraInfo" type="number" value="1.00000" onkeyup="tfUpdateOutputs()"/>
+            </div>
+          </div>
+          <div class="centerFlex">
+            <div class="tfInfoSpacing">
+              <h4 id="tfEnterMinWearText" class="tfInfoText">Введите минимальный износ</h4>
+              <input id="tfMinWearInput" class="tfExtraInfo" type="number" value="0.00000" onkeyup="tfUpdateOutputs()"/>
+            </div>
+          </div>
+          <div class="centerFlex">
+            <div class="tfInfoSpacing">
+              <h4 id="tfDesiredFloatText" class="tfInfoText">Желаемый Float</h4>
+              <input id="tfDesiredFloatInput" class="tfExtraInfo" type="number" value="0.50000" onkeyup="tfUpdateOutputs()"/>
+            </div>
+          </div>
+        </div>
+
+        <div id="tfOutcomes">
+          <div class="centerFlex">
+            <div class="tfOutcomesSpacing">
+              <h2 id="tfOutputFloatsText" class="tfOutputsText">Текущий выходной износ</h2>
+              <input type="text" class="tfOutputs" id="tfOutputFloatInput" readonly value="0.00000"/>
+            </div>
+          </div>
+          <div class="centerFlex">
+            <div class="tfOutcomesSpacing">
+              <h2 id="tfNeededAverageText" class="tfOutputsText">Необходимое среднее значение для желаемого Float</h2>
+              <input type="text" class="tfOutputs" id="tfNeededAverageInput" readonly value="0.00000"/>
+            </div>
+          </div>
+          <div class="centerFlex">
+            <div class="tfOutcomesSpacing">
+              <h2 id="tfCurrentAverageText" class="tfOutputsText">Текущее среднее значение 0 Floats</h2>
+              <input type="text" class="tfOutputs" id="tfCurrentAverageInput" readonly value="0.00000"/>
+            </div>
+          </div>
+          <div class="centerFlex">
+            <div class="tfOutcomesSpacing">
+              <h2 id="tfNewAverageNeededText" class="tfOutputsText">Среднее число последних необходимых чисел с плавающим флоатом</h2>
+              <input type="text" class="tfOutputs" id="tfNewAverageNeededInput" readonly value="0.00000"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- ********************************************************************************************************************************************************************* -->
+    <div id="floatCombosDiv" class="tabcontent width100">
+      <div class="width100">
+        <div class="centerFlex">
+          <p id="fcEnterFloatsText">Введите  Floats</p>
+        </div>
+      </div>
+
+      <div id="fcMoreFloatsDiv">
+        <div class="fcMoreFloatsFlex">
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+        </div>
+        <div class="fcMoreFloatsFlex">
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+        </div>
+        <div class="fcMoreFloatsFlex">
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+        </div>
+        <div class="fcMoreFloatsFlex">
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+        </div>
+        <div class="fcMoreFloatsFlex">
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+        </div>
+        <div class="fcMoreFloatsFlex">
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+          <input class="fcMoreFloats" type="number" max="1.0" min="0.0" value="0.00000" onkeyup="fcUpdateCombinations()"/>
+        </div>
+      </div>
+
+      <div id="fcTotalCombosDiv" class="width100">
+        <div class="centerFlex">
+          <input id="fcAltInput" onkeyup="fcUpdateCombinations()" value="Enter floats separated by a commas (float,float,float,float)"/>
+        </div>
+      </div>
+
+      <div id="criteriaDiv">
+        <div id="comboInfo1" class="fcComboInfo">
+          <h4 id="Centermaxweartext" class="fcCinfoText">Введите максимальный износ</h4>
+          <input id="fcCmaxwearinput" class="fcExtraInfo fcCinfoInputs" type="number" value="1.00000"/>
+        </div>
+        <div id="comboInfo2" class="fcComboInfo">
+          <h4 id="Centerminweartext" class="fcCinfoText">Введите минимальный износ</h4>
+          <input id="fcCminwearinput" class="fcExtraInfo fcCinfoInputs" type="number" value="0.00000"/>
+        </div>
+        <div id="comboInfo3" class="fcComboInfo">
+          <h4 id="Cdesiredfloattext" class="fcCinfoText">Желаемый Float</h4>
+          <input id="fcCdesiredfloatinput" class="fcExtraInfo fcCinfoInputs" type="number" value="0.5555"/>
+        </div>
+        <div id="comboInfo4" class="fcComboInfo">
+          <h4 id="howmuchabovetext" class="fcCinfoText">Желаемый уровень плавучести Floats</h4>
+          <input id="fcCspecificityinput" class="fcExtraInfo fcCinfoInputs" type="number" value="0.01"/>
+        </div>
+      </div>
+
+      <div class="width100">
+        <div id="fcOnlyLowerDiv" class="centerFlex">
+          <input id="fcOnlyLowerChk" type="checkbox">
+          <label for="fcOnlyLowerChk" id="fcOnlyLowerText">Показывать только Floats ниже предыдущего</label>
+        </div>
+      </div>
+
+      <div class="width100">
+        <div class="centerFlex">
+          <button id="fcGenerateCombos" onclick="fcCombinations()">Сгенерировать комбинации с указанными ниже числами с плавающим Floats</button>
+        </div>
+        <div class="centerFlex">
+          <button id="fcStop" onclick="done = true;">Остановить текущий запуск</button>
+        </div>
+        <div class="centerFlex">
+          <p id="fcWarning">Задержка 3 с перед запуском (надеюсь, поможет браузеру) - использует информацию, введенную выше</p>
+        </div>
+      </div>
+
+      <div class="centerFlex">
+        <p id='fcTotalCombosText'>Всего возможных комбинаций: 0<p>
+      </div>
+
+      <div id="fcTheProgress" class="width100">
+        <div id="fcProgressBar"></div>
+      </div>
+
+      <div class="width100">
+        <div class="centerFlex">
+          <p id="fcLimited">РЕЗУЛЬТАТЫ ОБРЕЗЕНЫ ПОСЛЕ ТОЧНОСТИ 4 ЦИФРОВ. Это может измениться в будущем.</p>
+        </div>
+      </div>
+      <div id="fcCombinationsText"></div>
+    </div>
+<!-- ********************************************************************************************************************************************************************* -->
+    <div id="opskinsFloatCombosDiv" class="tabcontent width100">
+      <div class="centerFlex">
+        <div id="apiKeyDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="apiKey" class="infoText CinfoText opSearchClass opApiSpacing">BitSkins Api Key</h4>
+          <input id="apiInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
+        </div>
+        <div id="secCodeDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="secCode" class="infoText CinfoText opSearchClass opApiSpacing">BitSkins Secure Code</h4>
+          <input id="secCodeInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="xxxxxx"/>
+        </div>
+        <div id="searchDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="search" class="infoText CinfoText opSearchClass opApiSpacing">Search BitSkins For</h4>
+          <input id="searchInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="ak redline"/>
+        </div>
+        <div id="minPriceDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="minPrice" class="infoText CinfoText opSearchClass opApiSpacing">Min Price ($)</h4>
+          <input id="minPriceInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" type="number" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="0.02"/>
+        </div>
+        <div id="maxPriceDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="maxPrice" class="infoText CinfoText opSearchClass opApiSpacing">Max Price ($)</h4>
+          <input id="maxPriceInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" type="number" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="1000.00"/>
+        </div>
+
+        <div id="wearDiv" class="centerFlex">
+          <div class="wears">
+            <div>
+              <input id="any" type="checkbox" onchange='whichWear("any");updateOpLink()'>
+              <label for="any">Any</label>
+            </div>
+            <div>
+              <input id="factoryNew" type="checkbox" onchange='whichWear("fn");updateOpLink()'>
+              <label for="factoryNew">Factory New</label>
+            </div>
+            <div>
+              <input id="minimalWear" type="checkbox" onchange='whichWear("mw");updateOpLink()'>
+              <label for="minimalWear">Minimal Wear</label>
+            </div>
+          </div>
+          <div class="wears">
+            <div>
+              <input id="fieldTested" type="checkbox" onchange='whichWear("ft");updateOpLink()'>
+              <label for="fieldTested">Field-Tested</label>
+            </div>
+            <div>
+              <input id="wellWorn" type="checkbox" onchange='whichWear("ww");updateOpLink()'>
+              <label for="wellWorn">Well-Worn</label>
+            </div>
+            <div>
+              <input id="battleScarred" type="checkbox" onchange='whichWear("bs");updateOpLink()'>
+              <label for="battleScarred">Battle-Scarred</label>
+            </div>
+          </div>
+        </div>
+
+        <div id="statDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="stat" class="infoText CinfoText opSearchClass opApiSpacing">Stattrack Yes/No (1/-1)</h4>
+          <input id="statInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" type="number" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="-1"/>
+        </div>
+        <div id="delayDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="delay" class="infoText CinfoText opSearchClass opApiSpacing">Tradelock Yes/No (1/-1)</h4>
+          <input id="delayInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" type="number" onkeydown="updateOpLink()" onkeyup="updateOpLink()" value="-1"/>
+        </div>
+      </div>
+
+      <div id="addRemoveDiv">
+        <div>
+          <button id="getInfoInput" class="extrainfo" onclick="addOpData()">Add Floats From Search (can be done with multiple searches)</button>
+        </div>
+        <div>
+          <button id="removeInfoInput" class="extrainfo" onclick="removeOpData()">Remove All Data (clear/reset)</button>
+        </div>
+        <div>
+          <button id="addCustomBtn" class="extrainfo" onclick="addCustomFloat()">Add a Float Not From BitSkins</button>
+        </div>
+      </div>
+
+      <div id="opLinkDiv" class="width100">
+        <div class="centerFlex">
+          <p id="susText">Or Use link below inputting in needed attributes</p>
+        </div>
+        <div class="centerFlex">
+          <textarea readonly id="opLink">https://api.opskins.com/ISales/Search/v1/?key=YOURAPIKEY&app=730_2&search_item=ak%20redlinee&min=0.02&max=1000&wear_range_low=0&wear_range_high=100&stat=0&souvenir=0</textarea>
+        </div>
+      </div>
+
+      <div class="width100">
+        <div class="centerFlex">
+          <textarea id="pastedJSON" onkeydown="updatecombinations()" onkeyup="updatecombinations()" onkeypress="updatecombinations()">Paste in your JSON information found from the link provided above (optional for if you don't want to input your api key on the site)
+You may need to press a key and delete it for the site to load total combinations possible
+This section is also for data generated by searches so don't delete it
+
+Make sure to paste each set of data with two returns so that it is two lines below everything else like this line</textarea>
+        </div>
+      </div>
+
+      <div class="width100">
+        <div class="centerFlex" style="align-items: center; justify-content: center;">
+          <button id="saveParams" onclick="saveParams()">Save Current Search Parameters</button>
+          <textarea readonly id="formattedOpskins">Float string that will work on other page will load here.</textarea>
+          <button id="opInfoButton" onclick="showOpInfo()">More Info/Features</button>
+        </div>
+      </div>
+
+      <div id="opInfoOverlay" class="centerFlex">
+        <div>
+          <div id="CmatchesDiv" class="comboInfo">
+            <h4 id="CmatchesText" class="infoText CinfoText">Minimum Floats From Searches 0-x in Combo firstsearch-lastsearch (x,x,x,x,x)</h4>
+            <input id="CmatchesInput" class="extrainfo CinfoInputs" value="0,0,0,0,0,0,0" onkeyup="getMatches()"/>
+          </div>
+        </div>
+        <div>
+          <h4 id="savedSearchesText" class="infoText CinfoText">Current Search History</h4>
+          <div class="centerFlex">
+            <textarea id="savedSearchesTextarea"></textarea>
+          </div>
+          <div class="centerFlex">
+            <button id="searchLinks" onclick="searchLinks()">Search All Links Above (requires apikey to be in links. Will not delete your previous data, must delete manually.)</button>
+          </div>
+        </div>
+        <div id="hidingDiv" class="centerFlex">
+          <button id="hideOpInfoButton" onclick="dontShowOpInfo()">Hide Overlay</button>
+        </div>
+        <div class="centerFlex">
+          <div id="pastParams"></div>
+          <div id="opInfoText"></div>
+        </div>
+      </div>
+
+      <div class="width100">
+        <div class="centerFlex">
+          <div id="comboInfo1" class="comboInfo flex1">
+            <h4 id="Centermaxweartext" class="infoText CinfoText">Max Wear</h4>
+            <input id="Cmaxwearinput" class="extrainfo CinfoInputs" type="number" value="1.00000"/>
+          </div>
+          <div id="comboInfo2" class="comboInfo flex1">
+            <h4 id="Centerminweartext" class="infoText CinfoText">Min Wear</h4>
+            <input id="Cminwearinput" class="extrainfo CinfoInputs" type="number" value="0.00000"/>
+          </div>
+          <div id="comboInfo3" class="comboInfo flex1">
+            <h4 id="Cdesiredfloattext" class="infoText CinfoText">Desired Float</h4>
+            <input id="Cdesiredfloatinput" class="extrainfo CinfoInputs" type="number" value="0.5555"/>
+          </div>
+          <div id="comboInfo4" class="comboInfo">
+            <h4 id="howmuchabovetext" class="infoText CinfoText">How Much Above Float To Show</h4>
+            <input id="Cspecificityinput" class="extrainfo CinfoInputs" type="number" value="0.01"/>
+          </div>
+          <div id="numFloatsDiv" class="comboInfo">
+            <h4 id="numFloats" class="infoText CinfoText">Num Floats To Load From Each Search first-last</h4>
+            <input id="numFloatsInput" class="extrainfo CinfoInputs" onkeyup="delayUpdate()" value="25,25,25,25,25"/>
+          </div>
+          <div id="CmaxPriceDiv" class="comboInfo">
+            <h4 id="CmaxPriceText" class="infoText CinfoText">Max Combo Price</h4>
+            <input id="CmaxPriceInput" class="extrainfo CinfoInputs" type="number" value="1000.00"/>
+          </div>
+        </div>
+      </div>
+
+      <div id="OLParent" class="width100" style="margin-top: 0.15%;">
+        <div class="centerFlex" style="justify-content: space-evenly;">
+          <div>
+            <input id="onlyLowerChk" type="checkbox" onclick="ifOnlyLower()">
+            <label for="onlyLowerChk" id="onlyLowerText">Only Show Floats Lower Than Previous</label>
+          </div>
+          <div>
+            <input id="priceChk" type="checkbox" onclick="ifLowerPrice()">
+            <label for="priceChk" id="priceText">Show Combos That Are The Correct Float and Lower Price</label>
+          </div>
+          <div>
+            <input id="lowPriceChk" type="checkbox" onclick="ifOnlyLowerPrice()">
+            <label for="lowPriceChk" id="priceText">Show Combos With Progessively Lower Prices</label>
+          </div>
+        </div>
+      </div>
+
+      <div id="generateDiv" class="width100">
+        <div class="centerFlex">
+          <button id="generatecombos" onclick="combinations()">Generate Combinations With Inputed Floats Below</button>
+        </div>
+        <div class="centerFlex">
+          <button id="stop" onclick="done = true;">Stop The Current Run</button>
+        </div>
+        <div class="centerFlex">
+          <p id="warning">3s Delay Before Starting (to hopefully help browser) -- Uses Information Inputted Above</p>
+        </div>
+      </div>
+
+      <div class="width100">
+        <div id="totalcombosdiv" class="centerFlex">
+          <div class="centerFlex">
+            <p id='totalcombostext'>Total Combinations Possible: 0<p>
+          </div>
+        </div>
+        <div id="theProgress">
+          <div id="progress_bar"></div>
+        </div>
+        <div class="centerFlex">
+          <div class="centerFlex">
+            <p id="limited">RESULTS ARE CURRENTLY CUT OFF AFTER 4 DIGITS OF ACCURACY. This could change in the future.</p>
+          </div>
+        </div>
+      </div>
+      <div id="combinationstext"></div>
+    </div>
+<!-- ********************************************************************************************************************************************************************* -->
+    <div id="ieee754Div" class="tabcontent">
+      <div class="width100">
+        <div id="ieee754">
+          <div class="IEEEs">
+            <p id="desiredIEEE" class="IEEEs ieeeLargeText">Желаемый Float</p>
+            <input id="desiredIEEEInput" class="IEEEsInput ieeeLargeText" value="0.50000" onkeyup="updateIeeeRange()"/>
+          </div>
+          <br>
+          <div class="IEEEs">
+            <p id="floatIEEE" class="IEEEs ieeeLargeText">IEEE754 Желаемый Float</p>
+            <input id="floatIEEEInput" class="IEEEsInput ieeeLargeText" value="0.50000" onkeyup="updateIeeeRange()"/>
+          </div>
+          <br>
+          <div class="IEEEs">
+            <p id="minIEEE" class="IEEEs ieeeSmallerText">Самый низкий средний показатель Желаемый Float</p>
+            <input id="minIEEEinput" class="IEEEsInput ieeeSmallerText" value="0.00000" readonly/>
+            <p id="maxIEEE" class="IEEEs ieeeSmallerText">Наивысший средний балл Желаемый Float</p>
+            <input id="maxIEEEinput" class="IEEEsInput ieeeSmallerText" value="0.00000" readonly/>
+          </div>
+          <br>
+          <div class="IEEEs">
+            <p id="middleIEEE" class="IEEEs ieeeLargeText">Середина мин. И макс. IEEE754</p>
+            <input id="middleIEEEinput" class="IEEEsInput ieeeLargeText" value="0.00000" readonly/>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- ********************************************************************************************************************************************************************* -->
+    <div id="floatPyramidDiv" class="tabcontent" >
+      <div id="rowscontainer">
+        <div id="row1div">
+          <input id="r1min" value="float min"></input>
+          <input id="r1max" value="float max"></input>
+          <input id="row1float" class="fpFloats" ></input>
+          <button id="fpGo" onclick="fpGo()">Go/Calculate!</button>
+        </div>
+        <hr id="separator">
+        <div id="row2div">
+          <input id="r2min" value="float min"></input>
+          <input id="r2max" value="float max"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <hr id="separator">
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div><div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+        <div id="row3div">
+          <input id="r3min" value="" readonly></input>
+          <input id="r3max" value="" readonly></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+          <input class="fpFloats fpGrey" value="0"></input>
+          <input class="fpFloats" value="0"></input>
+        </div>
+      </div>
+    </div>
+    <!--
+    <div id="ATCDiv" class="tabcontent">
+      <div class="centerFlex">
+        <div id="ATCApiKeyDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="ATCApiKey" class="infoText CinfoText opSearchClass opApiSpacing">BitSkins Api Key</h4>
+          <input id="ATCApiKeyInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" value="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
+        </div>
+        <div id="ATCSecCodeDiv" class="opskinsStuff opApiSpacing">
+          <h4 id="ATCSecCode" class="infoText CinfoText opSearchClass opApiSpacing">BitSkins Secure Code</h4>
+          <input id="ATCSecCodeInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" value="xxxxxx"/>
+        </div>
+      </div>
+      <div>
+        <div id="ATCCodeDiv">
+          <h4 id="ATCCode" class="infoText CinfoText opSearchClass opApiSpacing">BitSkins Add To Cart Code</h4>
+          <input id="ATCCodeInput" class="extrainfo CinfoInputs opskinsStuff opApiSpacing" value="-----"/>
+        </div>
+      </div>
+      <div class="centerFlex">
+        <button id="ATC" class="extrainfo" onclick="addToCart()">Add 10 Items to BitSkins Cart</button>
+      </div>
+    </div>
+  -->
+<!-- ********************************************************************************************************************************************************************* -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.0/async.min.js"></script>
+    <script src="bitskinscombinations.js"></script>
+    <script src="combinations.js"></script>
+    <script src="calculator.js"></script>
+    <script src="ieee.js"></script>
+    <script src="floatpyramid.js"></script>
+    <script src="sharedfunctions.js"></script>
+    <script src="tabs.js"></script>
+  </body>
+</html>

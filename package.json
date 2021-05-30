@@ -1,0 +1,27 @@
+{
+  "main": "index.html",
+  "name": "Float Manager",
+  "description": "manedger cs:go",
+  "version": "0.0.1",
+  "keywords": [ "demo", "nwjs" ],
+  "window": {
+    "title": "Float Manager",
+    "icon": "icon.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 1500,
+    "height": 900,
+    "position": "mouse",
+    "min_width": 400,
+    "min_height": 200,
+    "max_width": 1920,
+    "max_height": 1080
+
+  },
+  "author": "Rogalik",
+  "license": "MIT",
+  "dependencies": {
+    "moment": "latest",
+    "handlebars": "^2.0.0"
+  }
+}
